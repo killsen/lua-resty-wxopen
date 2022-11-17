@@ -68,7 +68,7 @@ local function _decrypt(msg_encrypt)
     local n4 = string.byte(s, 20, 20)
 
     -- msg_len 为 msg 长度，占 4 个字节
-    local len = wxa.msg.utils.bufToInt32(n1, n2, n3, n4)
+    local len = wxa.notify.msg.utils.bufToInt32(n1, n2, n3, n4)
 
     local msg = string.sub(s, 21, 21+len-1)
 
@@ -87,7 +87,7 @@ local function _encrypt(msg)
     if not aes_256_cbc then return nil, err end
 
     local random = "1234567890123456"
-    local msg_len = wxa.msg.utils.int32ToBufStr(#msg)
+    local msg_len = wxa.notify.msg.utils.int32ToBufStr(#msg)
 
     local appId = wxa.ctx.get_component_appid()
 
