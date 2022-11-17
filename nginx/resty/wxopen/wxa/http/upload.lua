@@ -17,8 +17,8 @@ local function upload(req)
     end
 
     -- 第三方平台接口是否使用反向代理模式
-    local upload_proxy = wxa.ctx.get_upload_proxy()
-    local url = upload_proxy or "https://api.weixin.qq.com/cgi-bin/media/upload"
+    local request_proxy = wxa.ctx.get_request_proxy()
+    local url = (request_proxy or "https://api.weixin.qq.com/") .. "cgi-bin/media/upload"
 
     local boundary = _hex(_random(16)) -- 取得随机码
 

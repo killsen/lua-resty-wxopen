@@ -3,6 +3,7 @@ local wxa               = require "resty.wxopen.wxa"
 local cjson             = require "cjson.safe"
 local mlcache           = require "app.utils.mlcache"
 local request           = require "app.utils.request"
+local _ssub             = string.sub
 
 local _T = {}
 local __ = { types = _T }
@@ -13,9 +14,8 @@ __.set_component__ = {
         { "secret"          , "第三方平台AppSecret"     },
         { "token"           , "消息校验Token"           },
         { "aeskey"          , "消息加解密AesKey"        },
-        { "token_proxy"     , "获取AccessToken使用代理" },
-        { "request_proxy"   , "请求接口使用代理"        },
-        { "upload_proxy"    , "上传文件使用代理"        },
+        { "token_proxy?"    , "获取AccessToken使用代理" },
+        { "request_proxy?"  , "请求接口使用代理"        },
     }
 }
 __.set_component = function(t)
@@ -26,13 +26,24 @@ __.set_component = function(t)
         ngx.ctx[__] = ctx
     end
 
+
     ctx.appid           = t.appid
     ctx.secret          = t.secret
     ctx.token           = t.token
     ctx.aeskey          = ngx.decode_base64(t.aeskey .. "=")
-    ctx.token_proxy     = t.token_proxy
-    ctx.request_proxy   = t.request_proxy
-    ctx.upload_proxy    = t.upload_proxy
+
+    local token_proxy = t.token_proxy
+    if token_proxy == "" then token_proxy = nil end
+
+    local request_proxy = t.request_proxy
+    if request_proxy == "" then
+        request_proxy = nil
+    elseif _ssub(request_proxy, -1) ~= "/" then
+        request_proxy = request_proxy .. "/"
+    end
+
+    ctx.token_proxy     = token_proxy
+    ctx.request_proxy   = request_proxy
 
 end
 
@@ -69,11 +80,6 @@ end
 -- 请求接口使用代理
 __.get_request_proxy = function()
     return get_ctx_val("request_proxy")
-end
-
--- 上传文件使用代理
-__.get_upload_proxy = function()
-    return get_ctx_val("upload_proxy")
 end
 
 -- 启动ticket推送服务
