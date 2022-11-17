@@ -106,7 +106,7 @@ __.set_component_verify_ticket = function(ticket)
     local component_appid = __.get_component_appid()
 
     local key  = "component_verify_ticket/" .. component_appid
-    local file = ngx.config.prefix() .. "/ticket_" .. component_appid .. ".txt"
+    local file = ngx.config.prefix() .. "/temp/wxa_ticket_" .. component_appid .. ".txt"
 
     mlcache.set(key, ticket)
 
@@ -127,7 +127,7 @@ __.get_component_verify_ticket = function(reload)
     local component_appsecret = __.get_component_secret()
 
     local key  = "component_verify_ticket/" .. component_appid
-    local file = ngx.config.prefix() .. "/ticket_" .. component_appid .. ".txt"
+    local file = ngx.config.prefix() .. "/temp/wxa_ticket_" .. component_appid .. ".txt"
 
     if reload then mlcache.del(key) end
 
