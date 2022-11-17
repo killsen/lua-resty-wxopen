@@ -2,6 +2,7 @@
 local wxa               = require "resty.wxopen.wxa"
 local to_xml            = require "app.utils.xml".to_xml
 local dt                = require "app.utils.dt"
+local logs_path         = ngx.config.prefix() .. "/logs/"
 local pcall             = pcall
 local _insert           = table.insert
 
@@ -110,17 +111,17 @@ end
 
 
 -- 保存日志
-local function add_log(res)
+local function add_log(obj)
 
     local yyyy, mm, dd = dt.yyyymmdd(ngx.today())
 
-    local path = ngx.config.prefix() .. "/temp/wxa_notify_" .. yyyy .. mm .. dd .. ".txt"
+    local path = logs_path .. "wxa_" .. yyyy .. mm .. dd .. ".log"
     local file = io.openx(path, "ab+" )
     if not file then return end
 
     file:write(ngx.localtime(), "\n")
     file:write(ngx.var.request_uri, "\n")
-    file:write(to_xml(res), "\n\n")
+    file:write(to_xml(obj), "\n\n")
     file:close()
 
 end

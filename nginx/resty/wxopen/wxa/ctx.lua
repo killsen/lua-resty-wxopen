@@ -3,6 +3,7 @@ local wxa               = require "resty.wxopen.wxa"
 local cjson             = require "cjson.safe"
 local mlcache           = require "app.utils.mlcache"
 local request           = require "app.utils.request"
+local logs_path         = ngx.config.prefix() .. "/logs/"
 local _ssub             = string.sub
 
 local _T = {}
@@ -106,7 +107,7 @@ __.set_component_verify_ticket = function(ticket)
     local component_appid = __.get_component_appid()
 
     local key  = "component_verify_ticket/" .. component_appid
-    local file = ngx.config.prefix() .. "/temp/wxa_ticket_" .. component_appid .. ".txt"
+    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
 
     mlcache.set(key, ticket)
 
@@ -127,7 +128,7 @@ __.get_component_verify_ticket = function(reload)
     local component_appsecret = __.get_component_secret()
 
     local key  = "component_verify_ticket/" .. component_appid
-    local file = ngx.config.prefix() .. "/temp/wxa_ticket_" .. component_appid .. ".txt"
+    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
 
     if reload then mlcache.del(key) end
 
