@@ -4,12 +4,15 @@ local __ = {}
 -- 错误码说明
 -- https://developers.weixin.qq.com/doc/oplatform/Return_codes/Return_code_descriptions_new.html
 
-local ERR = {
+local ERR = {  --> map<string>
     [-1]    = [[系统繁忙，此时请开发者稍候再试]],
     [ 1]    = [[系统错误]],
 }
 
+-- 设置错误信息
 __.set = function(err_code)
+-- @err_code : map<string>
+-- @return   : void
 
     if type(err_code) ~= "table" then return end
 
@@ -19,7 +22,10 @@ __.set = function(err_code)
 
 end
 
+-- 获取错误信息
 __.get = function(code)
+-- @code    : number
+-- @return  : string
 
     return ERR[code]
 

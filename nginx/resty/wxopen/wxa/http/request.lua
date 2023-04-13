@@ -9,7 +9,11 @@ local _insert           = table.insert
 local _concat           = table.concat
 local _ssub             = string.sub
 
+-- 解析 multipart form
 local function gen_form(form, headers)
+-- @form    : table
+-- @headers : map<string>
+-- @return  : body: string, headers: map<string>
 
     local boundary = _hex(_random(16)) -- 取得随机码
 
@@ -54,12 +58,15 @@ local function gen_form(form, headers)
 
 end
 
-local MEDIA_URL = {
+local MEDIA_URL = {  --> map<boolean>
     ["cgi-bin/media/get"]               = true,
     ["cgi-bin/media/getfeedbackmedia"]  = true,
 }
 
+-- http 请求
 local function request(req)
+-- @req     : { url, query?: string | table, body?: string | table, form?: table, headers?: map<string> }
+-- @return  : res?: any, err?: string, errcode?: number
 
     local url, query, body = req.url, req.query, req.body
     local form, headers = req.form, req.headers

@@ -7,7 +7,7 @@ local __ = {}
 __.use_proxy = true
 
 -- 需要重试的错误码
-local RETRY_CODE = {
+local RETRY_CODE = {  --> map<boolean>
     [40001] = true, -- invalid credential, access_token is invalid or not latest
     [40014] = true, -- invalid access_token
 --  [40091] = true, -- invalid component ticket
@@ -22,11 +22,17 @@ local RETRY_CODE = {
 
 -- 是否需要重试
 __.need_retry = function(code)
+-- @code    : number
+-- @return  : boolean
     return RETRY_CODE[code]
 end
 
 -- http get 请求
 __.get = function(url, req, is_retry)
+-- @url         : string
+-- @req         : table
+-- @is_retry  ? : boolean
+-- @return      : res?: any, err?: string, code?: number
 
     local  access_token, err = wxa.ctx.get_authorizer_access_token(req.appid, is_retry)
     if not access_token then return nil, err end
@@ -47,6 +53,10 @@ end
 
 -- http post 请求
 __.post = function(url, req, is_retry)
+-- @url         : string
+-- @req         : table
+-- @is_retry  ? : boolean
+-- @return      : res?: any, err?: string, code?: number
 
     local  access_token, err = wxa.ctx.get_authorizer_access_token(req.appid, is_retry)
     if not access_token then return nil, err end
@@ -70,6 +80,10 @@ end
 
 -- http form 请求
 __.form = function(url, req, is_retry)
+-- @url         : string
+-- @req         : table
+-- @is_retry  ? : boolean
+-- @return      : res?: any, err?: string, code?: number
 
     local  access_token, err = wxa.ctx.get_authorizer_access_token(req.appid, is_retry)
     if not access_token then return nil, err end
@@ -99,6 +113,9 @@ end
 
 -- http token 请求
 __.token = function(req, is_retry)
+-- @req         : table
+-- @is_retry  ? : boolean
+-- @return      : res?: any, err?: string, code?: number
 
     local url   = req.url
     local body  = req.body

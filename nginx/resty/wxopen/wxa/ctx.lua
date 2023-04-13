@@ -253,7 +253,8 @@ end
 -- https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_authorizer_token.html
 local function get_authorizer_access_token(authorizer_appid, is_retry)
 -- @authorizer_appid    : string  //授权小程序AppID
--- @is_retry            : boolean //是否重试
+-- @is_retry          ? : boolean //是否重试
+-- @return              : token?: string, err?: string, expires?: number
 
     local  authorizer_refresh_token, err = __.get_authorizer_refresh_token(authorizer_appid, is_retry)
     if not authorizer_refresh_token then return nil, err end
@@ -286,7 +287,8 @@ end
 -- 取得授权 app 的 authorizer_access_token
 __.get_authorizer_access_token = function(authorizer_appid, reload)
 -- @authorizer_appid    : string  //授权小程序AppID
--- @reload              : boolean //更新缓存
+-- @reload            ? : boolean //更新缓存
+-- @return              : token?: string, err?: string
 
     if type(authorizer_appid) ~= "string" or authorizer_appid == "" then
         return nil, "authorizer_appid 不能为空"
@@ -304,6 +306,8 @@ end
 
 -- 删除 authorizer_refresh_token 及 authorizer_access_token
 __.del_authorizer_token = function(authorizer_appid)
+-- @authorizer_appid    : string  //授权小程序AppID
+-- @return              : ok?: boolean, err?: string
 
     if type(authorizer_appid) ~= "string" or authorizer_appid == "" then
         return nil, "authorizer_appid 不能为空"
@@ -321,7 +325,8 @@ end
 -- 使用授权码获取授权信息
 -- https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/authorization_info.html
 local function query_auth_code(authorization_code)
--- @authorization_code  : string  //授权码
+-- @authorization_code  : string                //授权码
+-- @return              : @AuthorizationInfo    //授权信息
 
     local component_appid = __.get_component_appid()
 
@@ -333,7 +338,7 @@ local function query_auth_code(authorization_code)
     }
     if not res then return nil, err end
 
-    local info = res.authorization_info
+    local info = res.authorization_info  --> @AuthorizationInfo
 
     local appid          = info.authorizer_appid
     local refresh_token  = info.authorizer_refresh_token
@@ -357,7 +362,7 @@ _T.AuthorizationInfo = { "//授权信息",
 
 -- 使用授权码获取授权信息
 __.query_auth_code = function(authorization_code)
--- @authorization_code  : string  //授权码
+-- @authorization_code  : string                //授权码
 -- @return              : @AuthorizationInfo    //授权信息
 
     if type(authorization_code) ~= "string" or authorization_code == "" then

@@ -5,7 +5,10 @@ local _hex              = require "resty.string".to_hex
 local _random           = require "resty.random".bytes
 local _request          = require "app.utils".request
 
+-- 上传文件
 local function upload(req)
+-- @req     : { access_token, file_type?, file_name?, file_data }
+-- @return  : res?: table, err?: string
 
     local access_token  = req.access_token
     local file_type     = req.file_type or "image"

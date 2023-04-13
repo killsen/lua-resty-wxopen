@@ -24,6 +24,8 @@ local __ = { _VERSION = "v22.01.07" }
 
 -- 签名
 local function _signature(data)
+-- @data    : string[]
+-- @return  : string
 
     local token = wxa.ctx.get_component_token()
 
@@ -47,6 +49,8 @@ end
 
 -- 解密
 local function _decrypt(msg_encrypt)
+-- @msg_encrypt : string
+-- @return      : res?: string, err?: string
 
     local hash = { iv = "aaaabbbbccccdddd" }
     local cipher = aes.cipher(256,"cbc")
@@ -68,7 +72,7 @@ local function _decrypt(msg_encrypt)
     local n4 = string.byte(s, 20, 20)
 
     -- msg_len 为 msg 长度，占 4 个字节
-    local len = wxa.notify.msg.utils.bufToInt32(n1, n2, n3, n4)
+    local len = wxa.notify.utils.bufToInt32(n1, n2, n3, n4)
 
     local msg = string.sub(s, 21, 21+len-1)
 
@@ -78,6 +82,8 @@ end
 
 -- 加密
 local function _encrypt(msg)
+-- @msg     : string
+-- @return  : res?: string, err?: string
 
     local hash = { iv = "aaaabbbbccccdddd" }
     local cipher = aes.cipher(256,"cbc")
@@ -87,7 +93,7 @@ local function _encrypt(msg)
     if not aes_256_cbc then return nil, err end
 
     local random = "1234567890123456"
-    local msg_len = wxa.notify.msg.utils.int32ToBufStr(#msg)
+    local msg_len = wxa.notify.utils.int32ToBufStr(#msg)
 
     local appId = wxa.ctx.get_component_appid()
 
@@ -109,6 +115,7 @@ end
 
 -- 消息解码
 __.decode = function()
+-- @return  : res?: table, err?: string
 
     local args = ngx.req.get_uri_args()
     local timestamp     = args.timestamp        -- 时间戳
@@ -141,6 +148,8 @@ end
 
 -- 消息编码
 __.encode = function(obj)
+-- @obj     : table
+-- @return  : string
 
     local msg_xml       = to_xml(obj)
     local msg_encrypt   = _encrypt(msg_xml)
@@ -158,6 +167,10 @@ end
 
 -- 发送文本消息
 __.send_text = function(access_token, touser, content)
+-- @access_token    : string
+-- @touser          : string
+-- @content         : string
+-- @return          : res?: any, err?: string, errcode?: number
 
     return wxa.http.request {
         url     = "cgi-bin/message/custom/send",

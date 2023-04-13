@@ -19,7 +19,7 @@ __.imgSecCheck__ = {
 }
 __.imgSecCheck = function(req)
 
-    return wxa.http_form("wxa/img_sec_check", {
+    return wxa.http.form("wxa/img_sec_check", {
         appid       = req.appid,
 
         media       = {

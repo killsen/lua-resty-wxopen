@@ -34,7 +34,7 @@ __.upload_media = function(req)
     local file_type = req.file_type or "image"
     local file_name = req.file_name or FILE_NAME[file_type]
 
-    local res, err, code = wxa.http_form("cgi-bin/media/upload", {
+    local res, err, code = wxa.http.form("cgi-bin/media/upload", {
         appid       = req.appid,
         type        = file_type,
 
