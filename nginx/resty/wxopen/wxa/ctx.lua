@@ -18,6 +18,57 @@ __.init_mlcache = function(mod)
     mlcache = mod
 end
 
+-- 读取 ticket
+local function ticket_reader(component_appid)
+-- @component_appid : string
+-- @return          : ticket?: string
+
+    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
+
+    local  f = io.openx(file, "rb")
+    if not f then return end
+
+    local  ticket = f:read("*a"); f:close()
+    if not ticket or ticket == "" then return end
+
+    return ticket
+
+end
+
+-- 保存 ticket
+local function ticket_writer(component_appid, ticket)
+-- @component_appid : string
+-- @ticket          : string
+-- @return          : ok?: boolean
+
+    if type(component_appid) ~= "string" then return end
+    if type(ticket) ~= "string" then return end
+
+    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
+
+    local  f = io.openx(file, "wb+")
+    if not f then return end
+
+    f:write(ticket)
+    f:close()
+
+    return true
+
+end
+
+-- 初始化读取 ticket 方法
+__.init_ticket_reader = function(reader)
+-- @reader : function
+    ticket_reader = reader
+end
+
+-- 初始化保存 ticket 方法
+__.init_ticket_writer = function(writer)
+-- @writer : function
+    ticket_writer = writer
+end
+
+
 __.set_component__ = {
     "设置第三方平台",
     req = {
@@ -113,21 +164,20 @@ end
 -- 在第三方平台创建审核通过后，微信服务器会向其 “授权事件接收URL” 每隔 10 分钟以 POST 的方式推送 component_verify_ticket
 -- https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/component_verify_ticket.html
 __.set_component_verify_ticket = function(ticket)
+-- @ticket : string
+-- @return  : ok?: boolean, err?: string
 
     if type(ticket) ~= "string" then return end
 
     local component_appid = __.get_component_appid()
 
-    local key  = "component_verify_ticket/" .. component_appid
-    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
+    local key = "component_verify_ticket/" .. component_appid
 
-    mlcache.set(key, ticket)
+    local  ok, err = mlcache.set(key, ticket)
+    if not ok then return nil, err end
 
-    local  f = io.openx(file, "wb+")
-    if not f then return end
-
-    f:write(ticket)
-    f:close()
+    local  ok, err = ticket_writer(component_appid, ticket)
+    if not ok then return nil, err end
 
     return true
 
@@ -140,7 +190,6 @@ __.get_component_verify_ticket = function(reload)
     local component_appsecret = __.get_component_secret()
 
     local key  = "component_verify_ticket/" .. component_appid
-    local file = logs_path .. "wxa_ticket_" .. component_appid .. ".txt"
 
     if reload then mlcache.del(key) end
 
@@ -162,13 +211,7 @@ __.get_component_verify_ticket = function(reload)
             return obj.component_verify_ticket, nil, 10 * 60
         end
 
-        local  f = io.openx(file, "rb")
-        if not f then return end
-
-        local  ticket = f:read("*a"); f:close()
-        if not ticket or ticket == "" then return end
-
-        return ticket
+        return ticket_reader(component_appid)
 
     end)
 
