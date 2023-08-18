@@ -9,7 +9,17 @@ local _ssub             = string.sub
 local _T = {}
 local __ = { types = _T }
 
+local CTX_DEFAULT
+
+-- 初始化多级缓存模块
+__.init_mlcache = function(mod)
+-- @mod     : table
+-- @return  : void
+    mlcache = mod
+end
+
 __.set_component__ = {
+    "设置第三方平台",
     req = {
         { "appid"           , "第三方平台AppID"         },
         { "secret"          , "第三方平台AppSecret"     },
@@ -17,21 +27,17 @@ __.set_component__ = {
         { "aeskey"          , "消息加解密AesKey"        },
         { "token_proxy?"    , "获取AccessToken使用代理" },
         { "request_proxy?"  , "请求接口使用代理"        },
+        { "is_default?"     , "是否默认",   "boolean"   },
     }
 }
 __.set_component = function(t)
 
-    local ctx = ngx.ctx[__]
-    if not ctx then
-        ctx = {}
-        ngx.ctx[__] = ctx
-    end
+    local ctx = {}
 
-
-    ctx.appid           = t.appid
-    ctx.secret          = t.secret
-    ctx.token           = t.token
-    ctx.aeskey          = ngx.decode_base64(t.aeskey .. "=")
+    ctx.appid  = t.appid
+    ctx.secret = t.secret
+    ctx.token  = t.token
+    ctx.aeskey = ngx.decode_base64(t.aeskey .. "=")
 
     local token_proxy = t.token_proxy
     if token_proxy == "" then token_proxy = nil end
@@ -43,13 +49,19 @@ __.set_component = function(t)
         request_proxy = request_proxy .. "/"
     end
 
-    ctx.token_proxy     = token_proxy
-    ctx.request_proxy   = request_proxy
+    ctx.token_proxy   = token_proxy
+    ctx.request_proxy = request_proxy
+
+    ngx.ctx[__] = ctx
+
+    if t.is_default or not CTX_DEFAULT then
+        CTX_DEFAULT = ctx  -- 默认
+    end
 
 end
 
 local function get_ctx_val(key)
-    local  ctx = ngx.ctx[__]
+    local  ctx = ngx.ctx[__] or CTX_DEFAULT
     return ctx and ctx[key] or nil
 end
 
