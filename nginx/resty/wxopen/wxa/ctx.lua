@@ -91,10 +91,10 @@ __.set_component = function(t)
     ctx.aeskey = ngx.decode_base64(t.aeskey .. "=")
 
     local token_proxy = t.token_proxy
-    if token_proxy == "" then token_proxy = nil end
+    if type(token_proxy) ~= "string" or token_proxy == "" then token_proxy = nil end
 
     local request_proxy = t.request_proxy
-    if request_proxy == "" then
+    if type(request_proxy) ~= "string" or request_proxy == "" then
         request_proxy = nil
     elseif _ssub(request_proxy, -1) ~= "/" then
         request_proxy = request_proxy .. "/"
