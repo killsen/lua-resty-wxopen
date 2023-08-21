@@ -1,7 +1,7 @@
 
 local wxa  = require "resty.wxopen.wxa"
 
-local __ = { _VERSION = "v21.02.25" }
+local __ = { _VERSION = "v23.08.21" }
 
 __.types = {
 
@@ -24,7 +24,7 @@ __.types = {
 
     app_info = {
         visit_status                = "number       //可否访问",
-        categories                  = "category[]   //小程序类目",
+        categories                  = "@category[]  //小程序类目",
         network                     = {
             BizDomain               = "string[]     //业务域名",
             DownloadDomain          = "string[]     //下载域名",
@@ -41,7 +41,7 @@ __.types = {
         authorizer_refresh_token    = "string   //刷新令牌",
         authorizer_access_token     = "string ? //接口调用令牌",
         expires_in                  = "number ? //有效期，单位：秒",
-        func_info                   = "func[]   //授权给开发者的权限集列表",
+        func_info                   = "@func[]  //授权给开发者的权限集列表",
     },
 
     authorizer_info = {
@@ -50,8 +50,10 @@ __.types = {
         head_img	                = "string   //头像",
         user_name	                = "string   //原始ID",
         principal_name	            = "string   //主体名称",
+        signature                   = "string   //账号介绍",
         alias	                    = "string   //公众号所设置的微信号: 可能为空",
         qrcode_url	                = "string   //二维码图片的URL",
+        account_status              = "number   //账号状态: 1正常 14已注销 16已封禁 18已告警 19已冻结",
 
         business_info	            = { "//功能的开通状况: 0代表未开通，1代表已开通",
             open_store              = "number   //开通微信门店功能",
@@ -69,7 +71,7 @@ __.types = {
             name                    = "string   //认证类型名称",
         },
 
-        func_info                   = "func[]       //授权给开发者的权限集列表",
+        func_info                   = "@func[]      //授权给开发者的权限集列表",
         app_info                    = "app_info   ? //小程序信息",
     },
 
@@ -176,7 +178,7 @@ __.get_authorizer_info__ = {
     req = {
         authorizer_appid            = "//授权方AppID",
     },
-    res = "authorizer_info"
+    res = "@authorizer_info"
 }
 __.get_authorizer_info = function(req)
 
@@ -299,7 +301,7 @@ __.get_authorizer_list__ = {
     },
     res = {
         total_count     = "number //授权的帐号总数",
-        list            = "authorizer_item[] //当前查询的帐号基本信息列表",
+        list            = "@authorizer_item[] //当前查询的帐号基本信息列表",
     }
 }
 __.get_authorizer_list = function(req)
