@@ -55,6 +55,11 @@ __.types = {
         qrcode_url	                = "string   //二维码图片的URL",
         account_status              = "number   //账号状态: 1正常 14已注销 16已封禁 18已告警 19已冻结",
 
+        basic_config                = { "//基础配置信息",
+            is_phone_configured     = "boolean  //是否已经绑定手机号",
+            is_email_configured	    = "boolean  //是否已经绑定邮箱",
+        },
+
         business_info	            = { "//功能的开通状况: 0代表未开通，1代表已开通",
             open_store              = "number   //开通微信门店功能",
             open_scan               = "number   //开通微信扫商品功能",
@@ -72,7 +77,7 @@ __.types = {
         },
 
         func_info                   = "@func[]      //授权给开发者的权限集列表",
-        app_info                    = "app_info   ? //小程序信息",
+        app_info                    = "@app_info  ? //小程序信息",
     },
 
     authorizer_item = {
