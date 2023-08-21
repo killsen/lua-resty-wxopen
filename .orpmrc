@@ -1,7 +1,7 @@
 ﻿{
     "name":  "lua-resty-wxopen",
     "description":  "微信开放平台",
-    "version":  "1.0.4",
+    "version":  "1.0.5",
     "license":  "MIT",
     "homepage":  "https://github.com/killsen/lua-resty-wxopen",
     "app_name":  "demo",
