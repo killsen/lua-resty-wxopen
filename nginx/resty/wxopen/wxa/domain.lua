@@ -1,11 +1,12 @@
 
 local wxa = require "resty.wxopen.wxa"
+local _insert   = table.insert
 
-local __ = { _VERSION = "v22.01.18" }
+local __ = { _VERSION = "v24.09.23" }
 
 __.modify_domain__ = {
     "设置服务器域名",
---  https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Mini_Program_Basic_Info/Server_Address_Configuration.html
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/OpenApiDoc/miniprogram-management/domain-management/modifyServerDomain.html
     req = {
         appid           = "//小程序AppID",
         action          = "string    //操作类型: add 添加, delete 删除, set 覆盖, get 获取",
@@ -31,7 +32,7 @@ end
 
 __.set_webview_domain__ = {
     "设置业务域名",
---  https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Mini_Program_Basic_Info/setwebviewdomain.html
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/OpenApiDoc/miniprogram-management/domain-management/modifyJumpDomain.html
     req = {
         appid           = "//小程序AppID",
         -- 如果没有指定 action，则默认将第三方平台登记的小程序业务域名全部添加到该小程序
@@ -114,6 +115,57 @@ __.modify_wxa_jump_domain = function(req)
             wxa_jump_h5_domain            = req.wxa_jump_h5_domain,
         }
     }
+
+end
+
+__.get_prefetch_dns_domain__ = {
+    "获取DNS预解析域名",
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/OpenApiDoc/miniprogram-management/domain-management/getPrefetchDomain.html
+    req = {
+        appid = "string //小程序AppID",
+    },
+    types = {
+        DnsDomain = {
+            url     = "string //域名",
+            status  = "number //状态",
+        },
+    },
+    res = {
+        prefetch_dns_domain = "@DnsDomain[] //预解析域名列表",
+        size_limit          = "number       //总共可配置域名个数",
+    },
+}
+__.get_prefetch_dns_domain = function(req)
+
+    return wxa.http.get("wxa/get_prefetchdnsdomain", {
+        appid = req.appid,
+    })
+
+end
+
+__.set_prefetch_dns_domain__ = {
+    "设置DNS预解析域名",
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/OpenApiDoc/miniprogram-management/domain-management/setPrefetchDomain.html
+    req = {
+        appid   = "string   //小程序AppID",
+        domain  = "string[] //预解析域名列表",
+    },
+    res = {}
+}
+__.set_prefetch_dns_domain = function(req)
+
+    local domain = {}  --> { url }[]
+
+    for _, url in ipairs(req.domain) do
+        _insert(domain, { url = url })
+    end
+
+    return wxa.http.post("wxa/set_prefetchdnsdomain", {
+        appid = req.appid,
+        body  = {
+            prefetch_dns_domain = domain,
+        }
+    })
 
 end
 
