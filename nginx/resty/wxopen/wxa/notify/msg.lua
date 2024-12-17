@@ -1,4 +1,8 @@
 
+local ngx               = ngx
+local table             = table
+local string            = string
+
 local wxa               = require "resty.wxopen.wxa"
 local from_xml          = require "app.utils.xml".from_xml
 local to_xml            = require "app.utils.xml".to_xml
@@ -6,7 +10,7 @@ local aes               = require "resty.aes"
 local str               = require "resty.string"
 local sha1              = require "resty.sha1"
 
-local __ = { _VERSION = "v22.01.07" }
+local __ = { _VERSION = "v24.12.17" }
 
 -- 加密解密技术方案
 -- https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Technical_Plan.html
@@ -56,12 +60,16 @@ local function _decrypt(msg_encrypt)
     local cipher = aes.cipher(256,"cbc")
 
     local aesKey = wxa.ctx.get_component_aeskey()
-    local aes_256_cbc, err = aes:new(aesKey, nil, cipher, hash)
+    local aes_256_cbc, err = aes:new(aesKey, nil, cipher, hash, nil, nil, false)  -- nopadding
     if not aes_256_cbc then return nil, err end
 
     local  s = ngx.decode_base64(msg_encrypt)
            s = aes_256_cbc:decrypt(s)
-    if not s then return nil, "decrypt fail" end
+
+    if not s then
+        ngx.log(ngx.ERR, "decrypt fail: \n", msg_encrypt, "\n")
+        return nil, "decrypt fail"
+    end
 
     -- random(16B)为 16 字节的随机字符串
     -- local random  = string.sub(s, 1, 16)
