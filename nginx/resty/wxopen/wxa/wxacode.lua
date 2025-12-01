@@ -1,7 +1,7 @@
 
 local wxa = require "resty.wxopen.wxa"
 
-local __ = { _VERSION = "v21.02.22" }
+local __ = { _VERSION = "v25.12.01" }
 
 wxa.http.errcode.set {
     [45009] = "调用分钟频率受限(目前5000次/分钟，会调整)，如需大量小程序码，建议预生成。",
@@ -19,7 +19,7 @@ __.types = {
 
 __.getUnlimited__ = {
     "获取小程序码（永久有效，数量暂无限制）",
---  https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/qrcode/getwxacodeunlimit.html
+--  https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/getUnlimitedQRCode.html
 --  https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/qr-code/wxacode.getUnlimited.html
     req = {
         { "appid"               , "授权方AppID"                         },
@@ -29,6 +29,7 @@ __.getUnlimited__ = {
         { "auto_color?"         , "自动配置线条颜色"    , "boolean"     },  -- 默认 false
         { "line_color?"         , "二维码颜色"          , "rgb_color"   },  -- auto_color 为 false 时生效，使用 rgb 设置颜色
         { "is_hyaline?"         , "是否需要透明底色"    , "boolean"     },  -- 默认 false
+        { "env_version?"        , "要打开的小程序版本"                  },  -- release 正式版(默认), trial 体验版, develop 开发版
     },
 }
 __.getUnlimited = function(req)
@@ -37,7 +38,7 @@ end
 
 __.get__ = {
     "获取小程序码（永久有效，有数量限制）",
---  https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/qrcode/getwxacode.html
+--  https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/getQRCode.html
 --  https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/qr-code/wxacode.get.html
     req = {
         { "appid"               , "授权方AppID"                         },
@@ -46,6 +47,7 @@ __.get__ = {
         { "auto_color?"         , "自动配置线条颜色"    , "boolean"     },  -- 默认 false
         { "line_color?"         , "二维码颜色"          , "rgb_color"   },  -- auto_color 为 false 时生效，使用 rgb 设置颜色
         { "is_hyaline?"         , "是否需要透明底色"    , "boolean"     },  -- 默认 false
+        { "env_version?"        , "要打开的小程序版本"                  },  -- release 正式版(默认), trial 体验版, develop 开发版
     },
 }
 __.get = function(req)
@@ -54,7 +56,7 @@ end
 
 __.createQRCode__ = {
     "获取小程序二维码（永久有效，有数量限制）",
---  https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/qrcode/createwxaqrcode.html
+--  https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/createQRCode.html
 --  https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/qr-code/wxacode.createQRCode.html
     req = {
         { "appid"               , "授权方AppID"                         },
