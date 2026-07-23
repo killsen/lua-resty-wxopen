@@ -1,7 +1,7 @@
 
 local wxa = require "resty.wxopen.wxa"
 
-local __ = { _VERSION = "v21.02.22" }
+local __ = { _VERSION = "v26.07.23" }
 
 __.get_account_basic_info__ = {
     "获取基本信息",
@@ -258,6 +258,68 @@ __.change_search_status__ = {
 }
 __.change_search_status = function(req)
     return wxa.http.post("wxa/changewxasearchstatus", req)
+end
+
+-- 备案状态枚举
+local ICP_STATUS_INFO = {
+    [2   ] = "平台审核中",
+    [3   ] = "平台审核驳回",
+    [4   ] = "管局审核中",
+    [5   ] = "管局审核驳回",
+    [6   ] = "已备案",
+    [1024] = "未备案",
+    [1025] = "未备案 && 小程序信息未填",
+    [1026] = "未备案 && 小程序类目未填",
+    [1027] = "未备案 && 小程序信息未填 && 小程序类目未填",
+    [1028] = "未备案 && 小程序未认证",
+    [1029] = "未备案 && 小程序信息未填 && 小程序未认证",
+    [1030] = "未备案 && 小程序类目未填 && 小程序未认证",
+    [1031] = "未备案 && 小程序信息未填 && 小程序类目未填 && 小程序未认证",
+}
+
+local SMS_VERIFY_INFO = {
+    [1]  = "等待核验中",
+    [2]  = "核验完成",
+    [3]  = "核验超时",
+}
+
+__.get_icp_entrance_info__ = {
+    "获取小程序备案状态及驳回原因",
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/record/api_geticpentranceinfo.html
+    req = {
+        appid               = "//小程序AppID",
+    },
+    res = {
+        status              = "number   //备案状态枚举",
+        status_info         = "string   //备案状态信息",
+        is_canceling        = "boolean  //是否正在注销备案",
+        audit_data          = {
+            "//驳回原因: 备案不通过时返回",
+            key_name        = "string   //审核不通过的字段中文名",
+            error           = "string   //字段不通过的原因",
+            suggest         = "string   //修改建议",
+        },
+        available           = "number   //备案入口是否对该小程序开放: 0-不开放, 1-开放",
+        sms_verify_status   = "number   //管局短信核验状态: 1-等待核验中, 2-核验完成, 3-核验超时"
+    },
+}
+__.get_icp_entrance_info = function(req)
+
+    local res, err, code = wxa.http.get("wxa/icp/get_icp_entrance_info", req)
+    if not res then return nil, err, code end
+
+    local info = res.info  --> @return
+
+    -- 备案状态信息
+    info.status_info = ICP_STATUS_INFO[info.status] or ""
+
+    -- 管局短信核验状态，仅当备案状态为 `4`（管局审核中）的时候才有效。1-等待核验中, 2-核验完成, 3-核验超时
+    if info.status == 4 then
+        info.status_info = info.status_info .. (SMS_VERIFY_INFO[info.sms_verify_status] or "")
+    end
+
+    return info
+
 end
 
 return __
