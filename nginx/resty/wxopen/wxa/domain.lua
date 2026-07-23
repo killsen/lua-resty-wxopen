@@ -4,6 +4,17 @@ local _insert   = table.insert
 
 local __ = { _VERSION = "v24.09.23" }
 
+__.types = {
+    DomainInfo = {
+        requestdomain   = "string[]  //request 合法域名",
+        wsrequestdomain = "string[]  //socket 合法域名",
+        uploaddomain    = "string[]  //uploadFile 合法域名",
+        downloaddomain  = "string[]  //downloadFile 合法域名",
+        udpdomain       = "string[]  //upd 合法域名",
+        tcpdomain       = "string[]  //tcp 合法域名",
+    },
+}
+
 __.modify_domain__ = {
     "设置服务器域名",
 --  https://developers.weixin.qq.com/doc/oplatform/openApi/OpenApiDoc/miniprogram-management/domain-management/modifyServerDomain.html
@@ -17,14 +28,7 @@ __.modify_domain__ = {
         udpdomain       = "string[] ?//upd 合法域名",
         tcpdomain       = "string[] ?//tcp 合法域名",
     },
-    res = {
-        requestdomain   = "string[]  //request 合法域名",
-        wsrequestdomain = "string[]  //socket 合法域名",
-        uploaddomain    = "string[]  //uploadFile 合法域名",
-        downloaddomain  = "string[]  //downloadFile 合法域名",
-        udpdomain       = "string[]  //upd 合法域名",
-        tcpdomain       = "string[]  //tcp 合法域名",
-    }
+    res = "@DomainInfo"
 }
 __.modify_domain = function(req)
     return wxa.http.post("wxa/modify_domain", req)
@@ -165,6 +169,50 @@ __.set_prefetch_dns_domain = function(req)
         body  = {
             prefetch_dns_domain = domain,
         }
+    })
+
+end
+
+__.get_effective_domain__ = {
+    "获取发布后生效服务器域名列表",
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/domain-management/api_geteffectiveserverdomain.html
+    req = {
+        appid   = "string   //小程序AppID",
+    },
+    res = {
+        mp_domain        = "@DomainInfo  //通过公众平台配置的服务器域名列表",
+        third_domain     = "@DomainInfo  //通过第三方平台接口 modify_domain 配置的服务器域名列表",
+        direct_domain    = "@DomainInfo  //通过 modify_domain_directly 接口配置的服务器域名列表",
+        effective_domain = "@DomainInfo  //最后提交代码或者发布上线后生效的域名列表",
+    }
+}
+__.get_effective_domain = function(req)
+
+    return wxa.http.post("wxa/get_effective_domain", {
+        appid = req.appid,
+        body  = {}
+    })
+
+end
+
+__.get_effective_webviewdomain__ = {
+    "获取发布后生效业务域名列表",
+--  https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/domain-management/api_geteffectivejumpdomain.html
+    req = {
+        appid   = "string   //小程序AppID",
+    },
+    res = {
+        mp_webviewdomain        = "string[]  //通过公众平台配置的业务域名列表",
+        third_webviewdomain     = "string[]  //通过第三方平台接口 modify_domain 配置的业务域名列表",
+        direct_webviewdomain    = "string[]  //通过 modify_domain_directly 接口配置的业务域名列表",
+        effective_webviewdomain = "string[]  //最后提交代码或者发布上线后生效的域名列表",
+    }
+}
+__.get_effective_webviewdomain = function(req)
+
+    return wxa.http.post("wxa/get_effective_webviewdomain", {
+        appid = req.appid,
+        body  = {}
     })
 
 end
