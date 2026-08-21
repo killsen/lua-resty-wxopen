@@ -1,7 +1,7 @@
 
 local wxa = require "resty.wxopen.wxa"
 
-local __ = { _VERSION = "v26.07.23" }
+local __ = { _VERSION = "v26.08.21" }
 
 __.get_account_basic_info__ = {
     "获取基本信息",
@@ -289,16 +289,18 @@ __.get_icp_entrance_info__ = {
     req = {
         appid               = "//小程序AppID",
     },
-    res = {
-        status              = "number   //备案状态枚举",
-        status_info         = "string   //备案状态信息",
-        is_canceling        = "boolean  //是否正在注销备案",
-        audit_data          = {
-            "//驳回原因: 备案不通过时返回",
+    types = {
+        audit_data = {
             key_name        = "string   //审核不通过的字段中文名",
             error           = "string   //字段不通过的原因",
             suggest         = "string   //修改建议",
         },
+    },
+    res = {
+        status              = "number   //备案状态枚举",
+        status_info         = "string   //备案状态信息",
+        is_canceling        = "boolean  //是否正在注销备案",
+        audit_data          = "@audit_data[] ? //驳回原因: 备案不通过时返回",
         available           = "number   //备案入口是否对该小程序开放: 0-不开放, 1-开放",
         sms_verify_status   = "number   //管局短信核验状态: 1-等待核验中, 2-核验完成, 3-核验超时"
     },
