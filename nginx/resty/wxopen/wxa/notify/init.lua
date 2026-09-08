@@ -1,13 +1,13 @@
 
 local wxa               = require "resty.wxopen.wxa"
-local to_xml            = require "app.utils.xml".to_xml
+local to_xml            = require "resty.xml".to_xml
 local dt                = require "app.utils.dt"
 local logs_path         = ngx.config.prefix() .. "/logs/"
 local pcall             = pcall
 local _insert           = table.insert
 
 local __ = {}
-__.ver   = "22.02.17"
+__.ver   = "26.09.08"
 __.name  = "第三方平台授权消息"
 
 local NOTIFY = {

@@ -4,13 +4,13 @@ local table             = table
 local string            = string
 
 local wxa               = require "resty.wxopen.wxa"
-local from_xml          = require "app.utils.xml".from_xml
-local to_xml            = require "app.utils.xml".to_xml
+local from_xml          = require "resty.xml".from_xml
+local to_xml            = require "resty.xml".to_xml
 local aes               = require "resty.aes"
 local str               = require "resty.string"
 local sha1              = require "resty.sha1"
 
-local __ = { _VERSION = "v24.12.17" }
+local __ = { _VERSION = "v26.09.08" }
 
 -- 加密解密技术方案
 -- https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/Before_Develop/Technical_Plan.html
